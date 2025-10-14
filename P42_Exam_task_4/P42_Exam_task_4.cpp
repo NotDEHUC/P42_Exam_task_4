@@ -121,13 +121,34 @@ void sixFails() {
     cout << "-------------------------------------" << endl;
 }
 
+bool isContainLetter(char letter, char* word) {
+    for (size_t i = 0; i < strlen(word) + 1; i++)
+    {
+        if (letter == word[i]) {
+            return true;
+        }
+    }
+    return false;
+}
+
 int main()
 {
-    zeroFails();
-    oneFails();
-    twoFails();
-    threeFails();
-    fourFails();
-    fiveFails();
-    sixFails();
+    const char* word = "hydrogen";
+    char letter;
+    int fail = 0;
+    while (true)
+    {
+        if (fail == 0) {
+
+        }
+        cout << "Your letter: ";
+        cin >> letter;
+        if (isContainLetter) {
+
+        }
+        else
+        {
+            fail++;
+        }
+    }
 }
