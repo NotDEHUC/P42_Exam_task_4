@@ -136,14 +136,22 @@ void showWord(char* arr, const char* word) {
 }
 
 bool isContainLetter(char letter, const char* word, char* arr) {
+    int count = 0;
     for (size_t i = 0; i < strlen(word) + 1; i++)
     {
-        if (letter == word[i] && letter != arr[i]) {
+        if (letter == word[i]) {
             arr[i] = letter;
-            return true;
+            count++;
         }
     }
-    return false;
+    if (count > 0)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 bool isWin(char* arr, const char* word) {
@@ -155,13 +163,70 @@ bool isWin(char* arr, const char* word) {
     }
     return true;
 }
+
+
+
+char* getWord(int r) {
+    FILE* myfile;
+
+    int c;
+    int line = 0;
+    char* word;
+    word = new char[100];
+    int i = 0;
+
+    if (fopen_s(&myfile, "C:\\Users\\student\\source\\repos\\words.txt", "r") == NULL) {
+        while (!feof(myfile))
+        {
+            if (line == r) {
+                while (true)
+                {
+                    c = fgetc(myfile);
+                    if (c != '\n')
+                    {
+                        word[i] = c;
+                    }
+                    else
+                    {
+                        return word;
+                    }
+                }
+                return word;
+            }
+            else
+            {
+                c = fgetc(myfile);
+
+                if (c == '\n') {
+                    line++;
+                }
+                else
+                {
+                    continue;
+                }
+            }
+        }
+        return nullptr;
+    }
+    else
+    {
+        return nullptr;
+    }
+}
+
+
+
 int main()
 {
-    const char* word = "word";
+    //const char* word = "word";
     char letter;
     int fail = 0;
 
-    char* arr = new char[strlen(word)];
+    int r = rand() % 5;
+
+    const char* word = getWord(r);
+
+    char* arr = new char[strlen(word) + 1];
 
     while (true)
     {
