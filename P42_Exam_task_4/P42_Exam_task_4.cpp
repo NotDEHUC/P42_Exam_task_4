@@ -1,4 +1,6 @@
 ﻿#include <iostream>
+#include <string>
+#include <vector>
 
 using namespace std;
 
@@ -121,11 +123,15 @@ void sixFails() {
     cout << "-------------------------------------" << endl;
 }
 
-void showWord(char* arr, const char* word) {
-    for (size_t i = 0; i < strlen(word); i++)
+void showWord(char* arr, const char* word, int length) {
+    for (size_t i = 0; i < length; i++)
     {
         if(arr[i] == word[i]) {
             cout << arr[i] << " ";
+        }
+        else if (word[i] == ' ')
+        {
+            cout << "  ";
         }
         else
         {
@@ -135,9 +141,26 @@ void showWord(char* arr, const char* word) {
     cout << endl;
 }
 
-bool isContainLetter(char letter, const char* word, char* arr) {
+bool isContainLetter(char letter, const char* word, char* arr, vector<char>& used, int length) {
     int count = 0;
-    for (size_t i = 0; i < strlen(word) + 1; i++)
+
+
+
+    for (size_t i = 0; i < used.size(); i++)
+    {
+        if (letter == used[i]) {
+            cout << "Already used!!!" << endl;
+            return true;
+        }
+    }
+
+
+
+    used.push_back(letter);
+
+
+
+    for (size_t i = 0; i < length; i++)
     {
         if (letter == word[i]) {
             arr[i] = letter;
@@ -154,8 +177,8 @@ bool isContainLetter(char letter, const char* word, char* arr) {
     }
 }
 
-bool isWin(char* arr, const char* word) {
-    for (size_t i = 0; i < strlen(word); i++)
+bool isWin(char* arr, const char* word, int length) {
+    for (size_t i = 0; i < length; i++)
     {
         if (arr[i] != word[i]) {
             return false;
@@ -164,34 +187,53 @@ bool isWin(char* arr, const char* word) {
     return true;
 }
 
-
-
-char* getWord(int r) {
+char* getWord(int r, int& length) {
     FILE* myfile;
 
     int c;
     int line = 0;
     char* word;
     word = new char[100];
-    int i = 0;
 
-    if (fopen_s(&myfile, "C:\\Users\\student\\source\\repos\\words.txt", "r") == NULL) {
+    if (fopen_s(&myfile, "D:\\words.txt", "r") == NULL) {
         while (!feof(myfile))
         {
             if (line == r) {
                 while (true)
                 {
                     c = fgetc(myfile);
+                    if (c == -1) {
+                        cout << "Game cracked... ";
+                        return 0;
+                    }
+
                     if (c != '\n')
                     {
-                        word[i] = c;
+                        if ((char)c == 'x')
+                        {
+                            c = 'a';
+                        }
+                        else if((char)c == 'y')
+                        {
+                            c = 'b';
+                        }
+                        else if ((char)c == 'z')
+                        {
+                            c = 'c';
+                        }
+                        else if(c != ' ')
+                        {
+                            c += 3;
+                        }
+                        
+                        word[length] = c;
+                        length++;
                     }
                     else
                     {
                         return word;
                     }
                 }
-                return word;
             }
             else
             {
@@ -214,26 +256,62 @@ char* getWord(int r) {
     }
 }
 
+int linesCount() {
+    FILE* myfile;
+
+    int line = 0;
+    char* text = new char[100];
+
+    if (fopen_s(&myfile, "D:\\words.txt", "r") == NULL)
+    {
+        while (!feof(myfile)) 
+        {
+            fgets(text, 100, myfile);
+            line++;
+        }
+    }
+    else
+    {
+        fopen_s(&myfile, "D:\\words.txt", "w");
+        fprintf(myfile, "xmmib\n");
+        fprintf(myfile, "qlaxv fp x dlla axv ql qxhb x txih");
+        fprintf(myfile, "zlksbopxqflk\n");
+        fprintf(myfile, "coxkzb\n");
+        fprintf(myfile, "tfkalt\n");
+        fprintf(myfile, "bjmilvbb\n");
+        fclose(myfile);
+        line = 7;
+    }
+
+    return line - 1;
+}
+
 
 
 int main()
 {
-    //const char* word = "word";
+    srand(time(0));
+
     char letter;
     int fail = 0;
+    int length = 0;
 
-    int r = rand() % 5;
 
-    const char* word = getWord(r);
+    int r = rand() % linesCount();
 
-    char* arr = new char[strlen(word) + 1];
+    const char* word = getWord(r, length);
+
+    char* arr = new char[length];
+    vector<char> used;
 
     while (true)
     {
-        if (isWin(arr, word)) {
+        if (isWin(arr, word, length)) {
             cout << "Congratulations!!!";
             return false;
         }
+
+
 
         if (fail == 0) {
             zeroFails();
@@ -257,12 +335,24 @@ int main()
             cout << "Game over!:(" << endl;
         }
 
-        showWord(arr, word);
+
+
+        showWord(arr, word, length);
+
+        for (size_t i = 0; i < used.size(); i++)
+        {
+            cout << used[i] << " ";
+        }
+        cout << endl;
+
+
 
         cout << "Your letter: ";
         cin >> letter;
 
-        if (isContainLetter(letter, word, arr)) {
+
+
+        if (isContainLetter(letter, word, arr, used, length)) {
             continue;
         }
         else
